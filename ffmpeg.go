@@ -23,14 +23,13 @@ func NewVideoFilterBuilder(videoOpts *VideoOptions) *FilterComplexBuilder {
 
 	filterCode.WriteString(
 		fmt.Sprintf(`
-		[0][1]overlay[merged];
-		[merged]scale=%d:%d:force_original_aspect_ratio=1[scaled];
+		[0][1]overlay[scaled];
 		[scaled]fps=%d,setpts=PTS/%f[speed];
 		[speed]pad=%d:%d:(ow-iw)/2:(oh-ih)/2:%s[padded];
 		[padded]fillborders=left=%d:right=%d:top=%d:bottom=%d:mode=fixed:color=%s[padded]
 		`,
-			termWidth-double(videoOpts.Style.Padding),
-			termHeight-double(videoOpts.Style.Padding),
+			//termWidth-double(videoOpts.Style.Padding),
+			//termHeight-double(videoOpts.Style.Padding),
 
 			videoOpts.Framerate,
 			videoOpts.PlaybackSpeed,
@@ -180,7 +179,7 @@ func (fb *FilterComplexBuilder) WithGIF() *FilterComplexBuilder {
 		`
 		[%s]split[plt_a][plt_b];
 		[plt_a]palettegen=max_colors=256[plt];
-		[plt_b][plt]paletteuse[palette]`,
+		[plt_b][plt]paletteuse=dither=none[palette]`,
 		fb.prevStageName,
 	)
 	fb.prevStageName = "palette"
